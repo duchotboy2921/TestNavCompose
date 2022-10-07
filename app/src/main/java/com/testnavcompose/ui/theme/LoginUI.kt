@@ -8,15 +8,17 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.testnavcompose.viewmodel.LoginViewModel
 
 @Composable
-fun LoginUI() {
+fun LoginUI(loginModel:LoginViewModel) {
     Column(modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally) {
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center) {
             Text(text = "Hello bro")
-            Button(onClick = { /*TODO*/ }) {
+            Button(onClick = { loginModel.verifyLogin()}) {
                 Text(text = "Đăng nhập")
+
             }
     }
 
