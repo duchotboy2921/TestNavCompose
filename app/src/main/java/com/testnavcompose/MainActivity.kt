@@ -8,25 +8,23 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.testnavcompose.data.currentScreens
+import com.testnavcompose.data.mainContext
+import com.testnavcompose.data.pref
 import com.testnavcompose.nav.NavigationItem
 import com.testnavcompose.nav.SetupGraph
 import com.testnavcompose.nav.pushScreen
 import com.testnavcompose.nav.rootnav
 import com.testnavcompose.ui.theme.TestNavComposeTheme
-import com.testnavcompose.viewmodel.AppViewModel
+import com.testnavcompose.viewmodel.LoginViewModel
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
-    var viewModel = AppViewModel()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -40,11 +38,16 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+        pref = getSharedPreferences("CheckAuth", MODE_PRIVATE)      // init data
+        //prefEdit?.putString("password","minhduc")
+        //prefEdit?.commit()
+        pref?.edit()?.putString("password","minhduc")?.commit()
+        mainContext = this
 
         GlobalScope.launch {
-            for(i in 0..50){
+            for(i in 0..20){
                 delay(1000)
-                Log.d("state",viewModel._navigationState.value.toString())
+                Log.d("state", currentScreens.value.toString())
             }
         }
     }
@@ -52,19 +55,18 @@ class MainActivity : ComponentActivity() {
     private fun loadView() {
         rootnav = rememberNavController()
         SetupGraph(navController = rootnav)
-        setCurrentScreen(viewModel = viewModel)
+        setCurrentScreen()
     }
     @SuppressLint("StateFlowValueCalledInComposition")
     @Composable
-    fun setCurrentScreen(viewModel: AppViewModel){
-        val currentScreen =  remember {
-            viewModel._navigationState
-        }
-        setScreen(currentScreen.value)
+    fun setCurrentScreen(){
+        val currentSC by currentScreens.collectAsState()
+        setScreen(currentSC)
     }
     fun setScreen(screen:NavigationItem){
         rootnav.pushScreen(screen)
     }
+
 }
 
 
